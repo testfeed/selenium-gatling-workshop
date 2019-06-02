@@ -2,10 +2,10 @@ package com.testfeed
 
 import scala.io.Source
 import play.api.libs.json.Json.{fromJson, parse}
-import play.api.libs.json.{JsError, JsSuccess, Json, Reads}
+import play.api.libs.json.{JsError, JsString, JsSuccess, Json, Reads}
 
 case class ScenarioFragment(scenarioRequests: Seq[JuiceShopRequest])
-case class JuiceShopRequest(method: String, url: String, body: Option[String])
+case class JuiceShopRequest(method: String, url: String, body: Option[JsString])
 
 
 object ScenarioJsonParser {

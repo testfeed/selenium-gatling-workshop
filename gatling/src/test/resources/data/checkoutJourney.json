@@ -3,7 +3,7 @@
     {
       "method": "POST",
       "elapsed": "58",
-      "url": "",
+      "url": "/api/Users/",
       "headers": {
         "Host": "localhost:3000",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0",
@@ -15,7 +15,7 @@
         "Content-Length": "259",
         "Connection": "keep-alive"
       },
-      "body": "{\"email\":\"s9MCcshPcC@testing.com\",\"password\":\"nSpxnvtLgj\",\"passwordRepeat\":\"nSpxnvtLgj\",\"securityQuestion\":{\"id\":2,\"question\":\"Mother's maiden name?\",\"createdAt\":\"2019-06-01T15:37:27.983Z\",\"updatedAt\":\"2019-06-01T15:37:27.983Z\"},\"securityAnswer\":\"YnFa2tnweV\"}"
+      "body": "{\"email\":\"anaaremere@testing.com\",\"password\":\"anaaremere\",\"passwordRepeat\":\"anaaremere\",\"securityQuestion\":{\"id\":2,\"question\":\"Mother's maiden name?\",\"createdAt\":\"2019-06-01T15:37:27.983Z\",\"updatedAt\":\"2019-06-01T15:37:27.983Z\"},\"securityAnswer\":\"YnFa2tnweV\"}"
     }
   ]
 }

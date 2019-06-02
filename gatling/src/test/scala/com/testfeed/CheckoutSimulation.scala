@@ -54,10 +54,9 @@ class CheckoutSimulation extends Simulation
       case "GET" => httpMethods.get(pageUrl)
         .disableFollowRedirect
       case "POST" =>
-        body.get.foldLeft(httpMethods.post(pageUrl)
-          .disableFollowRedirect) {
-          (e, shopRequest) => e.body(StringBody(shopRequest.toString)).asJson
-        }
+        httpMethods
+          .post(pageUrl)
+          .body(StringBody(body.get.value)).asJson
     }).check(status lt 400)
   }
 }
