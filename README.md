@@ -62,7 +62,7 @@
     chmod +x /home/$USER/geckodriver
 ```
 
-### Start the OWASP juice shop
+#### Start the OWASP juice shop
 ```
     sudo docker run --rm -p 3000:3000 bkimminich/juice-shop:v8.6.2
 ```
