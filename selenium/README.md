@@ -2,7 +2,7 @@
 
 #### Run the sample website image
 ```
-    docker run --rm -p 3000:3000 bkimminich/juice-shop:v8.6.2
+    sudo docker run --rm -p 3000:3000 bkimminich/juice-shop:v8.6.2
 ```
 
 #### Download the Mozilla geckodriver

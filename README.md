@@ -78,11 +78,9 @@
     sbt -Dwebdriver.gecko.driver=/home/$USER/geckodriver test
 
 ```
-- the test might fail at the moment
 
 #### Resolve the gatling project dependencies and run the sample test
 ```
     cd selenium-gatling-workshop/gatling
     sbt "gatling:test"
 ```
-- the test might fail at the moment
