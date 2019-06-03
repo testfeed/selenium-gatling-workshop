@@ -5,7 +5,7 @@ import play.api.libs.json.Json.{fromJson, parse}
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json, Reads}
 
 case class ScenarioFragment(scenarioRequests: Seq[JuiceShopRequest])
-case class JuiceShopRequest(method: String, url: String, body: Option[JsString])
+case class JuiceShopRequest(method: String, path: String, body: Option[JsString])
 
 
 object ScenarioJsonParser {

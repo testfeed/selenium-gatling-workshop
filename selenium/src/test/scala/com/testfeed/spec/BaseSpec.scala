@@ -54,11 +54,11 @@ trait BaseSpec extends FeatureSpec
       .map { entry: HarEntry =>
         val request: HarRequest = entry.getRequest
         val url: String = request.getUrl
-        val parsedUrl = url.substring(url.length)
+        val path = url.substring(baseUrl("juice-shop").length)
         JsObject(Seq(
           "method" -> JsString(request.getMethod),
           "elapsed" -> JsString(entry.getTime.toString),
-          "url" -> JsString(parsedUrl),
+          "path" -> JsString(path),
           "headers" -> JsObject(request.getHeaders
             .filterNot(_.getName.contains("Cookie"))
             .map(header => header.getName -> JsString(header.getValue)))

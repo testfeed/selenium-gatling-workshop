@@ -46,9 +46,9 @@ class CheckoutSimulation extends Simulation
 
   private def createRequestBuilder(shopRequest: JuiceShopRequest): HttpRequestBuilder = {
     import shopRequest._
-    val pageUrl: Expression[String] = s"$baseUrl${shopRequest.url}"
+    val pageUrl: Expression[String] = s"$baseUrl${shopRequest.path}"
 
-    val title: String = s"${shopRequest.method} on ${shopRequest.url}"
+    val title: String = s"${shopRequest.method} on ${shopRequest.path}"
     val httpMethods = http(title)
     (shopRequest.method match {
       case "GET" => httpMethods.get(pageUrl)
