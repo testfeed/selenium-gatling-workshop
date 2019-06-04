@@ -60,7 +60,7 @@ trait BaseSpec extends FeatureSpec
           "elapsed" -> JsString(entry.getTime.toString),
           "path" -> JsString(path),
           "headers" -> JsObject(request.getHeaders
-            .filterNot(_.getName.contains("Cookie"))
+            .filterNot(_.getName.contains("Authorization"))
             .map(header => header.getName -> JsString(header.getValue)))
         ).++(if (request.getMethod == "POST") {
           Seq("body" -> JsString(request.getPostData.getText))

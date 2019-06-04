@@ -27,7 +27,7 @@ class CheckoutSimulation extends Simulation
     ScenarioConfig(s"src/test/resources/data/checkoutJourney.json", 1)
   ).map(config => ScenarioDefinition(checkoutScenario(config.fileName, buildJourneyRequests(loadDataFromFile(config.fileName))), config.load))
 
-  if(runSingleUserJourney) {
+  if (runSingleUserJourney) {
     val injectedBuilders = checkoutScenarioDefinitions.map(scenarioDefinition => {
       scenarioDefinition.builder.inject(atOnceUsers(1))
     })
@@ -41,22 +41,39 @@ class CheckoutSimulation extends Simulation
 
   private def buildJourneyRequests(fragment: ScenarioFragment): Seq[HttpRequestBuilder] = {
     fragment.scenarioRequests
-      .map {createRequestBuilder(_)}
+      .map {
+        createRequestBuilder(_)
+      }
   }
+
+  val basketIdPattern = """"bid":([\d]+),"""
 
   private def createRequestBuilder(shopRequest: JuiceShopRequest): HttpRequestBuilder = {
     import shopRequest._
-    val pageUrl: Expression[String] = s"$baseUrl${shopRequest.path}"
+    val pageUrl: Expression[String] = if (path.contains("basket")) {
+      s"$baseUrl${path.replace("0000000000", "${basketId}")}"
+    } else {
+      s"$baseUrl$path"
+    }
 
-    val title: String = s"${shopRequest.method} on ${shopRequest.path}"
+    val title: String = s"${shopRequest.method} on $path"
     val httpMethods = http(title)
     (shopRequest.method match {
       case "GET" => httpMethods.get(pageUrl)
+        .header("Authorization", "${authToken}")
         .disableFollowRedirect
       case "POST" =>
         httpMethods
           .post(pageUrl)
-          .body(StringBody(body.get.value)).asJson
+          .header("Authorization", "${authToken}")
+          .check(regex(_ => basketIdPattern).optional.saveAs("basketId"))
+          .body(StringBody(if (body.get.value.contains("UserId"))
+            body.get.value.replace("0000000000", "${userId}")
+          else if (body.get.value.contains("BasketId"))
+            body.get.value.replace("0000000000", "${basketId}")
+          else
+            body.get.value.replace("0000000000", "${randomCounter}"))
+          ).asJson
     }).check(status lt 400)
   }
 }

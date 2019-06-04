@@ -3,5 +3,5 @@ project/project
 project/target
 target
 .idea
-gatling
 *.iml
+results/
