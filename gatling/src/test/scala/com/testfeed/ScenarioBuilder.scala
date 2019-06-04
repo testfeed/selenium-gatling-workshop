@@ -18,17 +18,15 @@ object ScenarioBuilder extends SimulationConfig
   def checkoutScenario(name: String, journeySteps: Seq[HttpRequestBuilder]): ScenarioBuilder = {
 
     val registrationSteps = scenario(name)
-      .feed(emailFeeder)
       .exec(getSecurityQuestions).exitHereIfFailed
       .exec(register).exitHereIfFailed
       .exec(storeSecurityAnswer).exitHereIfFailed
 
     val loginSteps = scenario(name)
-      .feed(emailFeeder)
       .exec(login).exitHereIfFailed
 
     journeySteps.foldLeft(
-      scenario(name).feed(randomCounterFeeder)
+      scenario(name).feed(randomCounterFeeder).feed(emailFeeder)
       .exec(registrationSteps).exec(loginSteps)) { (steps, requestBuilder) =>
       steps.exec(requestBuilder).exitHereIfFailed
     }

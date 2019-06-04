@@ -46,27 +46,27 @@ class CheckoutSimulation extends Simulation
       }
   }
 
-  val basketIdPattern = """"bid":([\d]+),"""
-
   private def createRequestBuilder(shopRequest: JuiceShopRequest): HttpRequestBuilder = {
     import shopRequest._
-    val pageUrl: Expression[String] = if (path.contains("basket")) {
-      s"$baseUrl${path.replace("0000000000", "${basketId}")}"
-    } else {
-      s"$baseUrl$path"
+    val pageUrl: Expression[String] = {
+      if (path.contains("basket")) {
+        s"$baseUrl${path.replace("0000000000", "${basketId}")}"
+      } else {
+        s"$baseUrl$path"
+      }
     }
 
     val title: String = s"${shopRequest.method} on $path"
     val httpMethods = http(title)
     (shopRequest.method match {
       case "GET" => httpMethods.get(pageUrl)
-        .header("Authorization", "${authToken}")
+        .header("Authorization", "Bearer ${authToken}")
         .disableFollowRedirect
       case "POST" =>
         httpMethods
           .post(pageUrl)
-          .header("Authorization", "${authToken}")
-          .check(regex(_ => basketIdPattern).optional.saveAs("basketId"))
+          .header("Content-Type", "application/json")
+          .header("Authorization", "Bearer ${authToken}")
           .body(StringBody(if (body.get.value.contains("UserId"))
             body.get.value.replace("0000000000", "${userId}")
           else if (body.get.value.contains("BasketId"))

@@ -21,12 +21,14 @@ trait RegistrationSteps {
 
   val register = http("Registration")
     .post(registrationUrl)
-    .body(StringBody("{\"email\":\"${email}\",\"password\":\"K6tEPx9Usw\",\"passwordRepeat\":\"K6tEPx9Usw\",\"securityQuestion\":{\"id\":2,\"question\":\"Mother's maiden name?\",\"createdAt\":\"2019-06-03T19:54:37.113Z\",\"updatedAt\":\"2019-06-03T19:54:37.113Z\"},\"securityAnswer\":\"oo4PGZpyzR\"}"))
+    .header("Content-Type", "application/json")
+    .body(StringBody("{\"email\":\"${email}\",\"password\":\"P4ssword.\",\"passwordRepeat\":\"P4ssword.\",\"securityQuestion\":{\"id\":2,\"question\":\"Mother's maiden name?\",\"createdAt\":\"2019-06-03T19:54:37.113Z\",\"updatedAt\":\"2019-06-03T19:54:37.113Z\"},\"securityAnswer\":\"oo4PGZpyzR\"}"))
     .check(regex(_ => userIdPattern).saveAs("userId"))
     .check(status lt 400)
 
   val storeSecurityAnswer = http("Send security answer")
     .post(securityAnswersUrl)
-    .body(StringBody("{\"UserId\":${userId},\"answer\":\"oo4PGZpyzR\",\"SecurityQuestionId\":2}"))
+    .header("Content-Type", "application/json")
+    .body(StringBody("{\"UserId\":${userId},\"answer\":\"mmn\",\"SecurityQuestionId\":2}"))
     .check(status lt 400)
 }
