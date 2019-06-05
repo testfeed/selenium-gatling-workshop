@@ -7,15 +7,15 @@ import io.gatling.http.Predef._
 trait LoginSteps {
 
   val loginUrl: String = s"$baseUrl/rest/user/login"
-  val authTokenPattern = """"token":"(.+)","""
-  val basketIdPattern = """"bid":([\d]+),"""
+  val dslAuthTokenPattern = """"token":"(.+)","""
+  val dslBasketIdPattern = """"bid":([\d]+),"""
 
   val login = http("Login")
     .post(loginUrl)
     .header("Content-Type", "application/json")
     .body(StringBody("{\"email\":\"${email}\",\"password\":\"P4ssword.\"}"))
-    .check(regex(_ => authTokenPattern).saveAs("authToken"))
-    .check(regex(_ => basketIdPattern).saveAs("basketId"))
+    .check(regex(_ => dslAuthTokenPattern).saveAs("authToken"))
+    .check(regex(_ => dslBasketIdPattern).saveAs("basketId"))
     .check(status lt 400)
 
 }

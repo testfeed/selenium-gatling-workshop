@@ -48,13 +48,21 @@ class CheckoutSimulation extends Simulation
 
   private def createRequestBuilder(shopRequest: JuiceShopRequest): HttpRequestBuilder = {
     import shopRequest._
+
+    val BasketPathPattern = ".*basket.*".r
+    val OrderIdPattern = ".*ftp.*".r
+
     val pageUrl: Expression[String] = {
-      if (path.contains("basket")) {
-        s"$baseUrl${path.replace("0000000000", "${basketId}")}"
-      } else {
-        s"$baseUrl$path"
+      path match {
+        case BasketPathPattern() => s"$baseUrl${path.replace("0000000000", "${basketId}")}"
+        case OrderIdPattern() => s"$baseUrl${path.replace("0000000000", "${orderId}")}"
+        case _ => s"$baseUrl$path"
       }
     }
+
+    val UserIdPattern = ".+UserId.+".r
+    val BasketIdPattern = ".+BasketId.+".r
+    val orderIdPattern = """orderConfirmation":"/ftp/(.+)"}"""
 
     val title: String = s"${shopRequest.method} on $path"
     val httpMethods = http(title)
@@ -67,13 +75,12 @@ class CheckoutSimulation extends Simulation
           .post(pageUrl)
           .header("Content-Type", "application/json")
           .header("Authorization", "Bearer ${authToken}")
-          .body(StringBody(if (body.get.value.contains("UserId"))
-            body.get.value.replace("0000000000", "${userId}")
-          else if (body.get.value.contains("BasketId"))
-            body.get.value.replace("0000000000", "${basketId}")
-          else
-            body.get.value.replace("0000000000", "${randomCounter}"))
-          ).asJson
+          .check(regex(_ => orderIdPattern).optional.saveAs("orderId"))
+          .body(StringBody(body.get.value match {
+            case UserIdPattern() => body.get.value.replace("0000000000", "${userId}")
+            case BasketIdPattern() => body.get.value.replace("0000000000", "${basketId}")
+            case _ => body.get.value.replace("0000000000", "${randomCounter}")
+          })).asJson
     }).check(status lt 400)
   }
 }

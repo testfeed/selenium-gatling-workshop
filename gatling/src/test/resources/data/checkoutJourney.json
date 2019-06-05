@@ -80,7 +80,7 @@
     {
       "method": "GET",
       "elapsed": "75",
-      "path": "/rest/basket/7",
+      "path": "/rest/basket/0000000000",
       "headers": {
         "Host": "localhost:3000",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0",
@@ -96,7 +96,7 @@
     {
       "method": "POST",
       "elapsed": "55",
-      "path": "/rest/basket/7/checkout",
+      "path": "/rest/basket/0000000000/checkout",
       "headers": {
         "Host": "localhost:3000",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0",
@@ -114,7 +114,7 @@
     {
       "method": "GET",
       "elapsed": "5",
-      "path": "/ftp/order_c37c-a214cc9a0c4ac932.pdf",
+      "path": "/ftp/0000000000",
       "headers": {
         "Host": "localhost:3000",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0",
@@ -127,26 +127,9 @@
       }
     },
     {
-      "method": "POST",
-      "elapsed": "1",
-      "path": "/socket.io/?EIO=3&transport=polling&t=MiUxoT0&sid=MfIfgP1ukdTiO_ifAAAI",
-      "headers": {
-        "Host": "localhost:3000",
-        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0",
-        "Accept": "*/*",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Accept-Encoding": "gzip, deflate",
-        "Referer": "http://localhost:3000/",
-        "Content-type": "text/plain;charset=UTF-8",
-        "Content-Length": "3",
-        "Connection": "keep-alive"
-      },
-      "body": "1:1"
-    },
-    {
       "method": "GET",
       "elapsed": "2",
-      "path": "/ftp/order_c37c-a214cc9a0c4ac932.pdf",
+      "path": "/ftp/0000000000",
       "headers": {
         "Host": "localhost:3000",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0",
@@ -178,7 +161,7 @@
     {
       "method": "GET",
       "elapsed": "99",
-      "path": "/rest/basket/7",
+      "path": "/rest/basket/0000000000",
       "headers": {
         "Host": "localhost:3000",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0",
