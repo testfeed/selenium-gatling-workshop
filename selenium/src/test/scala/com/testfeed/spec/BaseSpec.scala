@@ -1,6 +1,6 @@
 package com.testfeed.spec
 
-import java.net.InetAddress
+import java.net.{InetAddress, URL}
 
 import com.testfeed.config.TestConfig
 import net.lightbody.bmp.client.ClientUtil
@@ -45,12 +45,18 @@ trait BaseSpec extends FeatureSpec
     proxy.newHar(testData.name)
   }
 
+  val urlExclusions = Seq("admin", "whoami", "Challenges", "languages", "json", "socket")
+
   override def afterEach(testData: TestData): Unit = {
     val url = baseUrl("juice-shop")
     val headerRegex = "text/html|text/plain".r
     println(JsObject(Seq("scenarioRequests" -> JsArray(proxy.getHar.getLog.getEntries
       .filter(_.getRequest.getUrl.contains(url))
       .filter(_.getRequest.getHeaders.exists(header => headerRegex.findFirstMatchIn(header.getValue).isDefined))
+      .filterNot(harEntry => {
+        val url: String = harEntry.getRequest.getUrl
+        urlExclusions.exists(new URL(url).getPath.contains(_))
+      })
       .map { entry: HarEntry =>
         val request: HarRequest = entry.getRequest
         val url: String = request.getUrl
