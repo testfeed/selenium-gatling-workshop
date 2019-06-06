@@ -13,8 +13,6 @@ object ScenarioBuilder extends SimulationConfig
   with RegistrationSteps
   with LoginSteps {
 
-  val randomCounterFeeder = Iterator.continually(Map("randomCounter" -> s"${Seq.fill(10)(Random.nextInt(9)).mkString("")}"))
-
   def checkoutScenario(name: String, journeySteps: Seq[HttpRequestBuilder]): ScenarioBuilder = {
 
     val registrationSteps = scenario(name)
@@ -26,7 +24,7 @@ object ScenarioBuilder extends SimulationConfig
       .exec(login).exitHereIfFailed
 
     journeySteps.foldLeft(
-      scenario(name).feed(randomCounterFeeder).feed(emailFeeder)
+      scenario(name).feed(emailFeeder)
       .exec(registrationSteps).exec(loginSteps)) { (steps, requestBuilder) =>
       steps.exec(requestBuilder).exitHereIfFailed
     }

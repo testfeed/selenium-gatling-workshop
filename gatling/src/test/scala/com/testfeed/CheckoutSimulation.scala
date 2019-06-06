@@ -49,19 +49,21 @@ class CheckoutSimulation extends Simulation
   private def createRequestBuilder(shopRequest: JuiceShopRequest): HttpRequestBuilder = {
     import shopRequest._
 
-    val BasketPathPattern = ".*basket.*".r
-    val OrderIdPattern = ".*ftp.*".r
+    val BasketPathPattern = """.+/basket/(\d+)[/checkout"]?""".r
+    val OrderIdPattern = ".*ftp/(.+)".r
 
     val pageUrl: Expression[String] = {
       path match {
-        case BasketPathPattern() => s"$baseUrl${path.replace("0000000000", "${basketId}")}"
-        case OrderIdPattern() => s"$baseUrl${path.replace("0000000000", "${orderId}")}"
+        case BasketPathPattern(basketId) =>
+          s"$baseUrl${path.replace(basketId, "${basketId}")}"
+        case OrderIdPattern(orderId) =>
+          s"$baseUrl${path.replace(orderId, "${orderId}")}"
         case _ => s"$baseUrl$path"
       }
     }
 
-    val UserIdPattern = ".+UserId.+".r
-    val BasketIdPattern = ".+BasketId.+".r
+    val UserIdPattern = """.+UserId.+(\d+)""".r
+    val BasketIdPattern = """.+BasketId\":\"(\d+).+""".r
     val orderIdPattern = """orderConfirmation":"/ftp/(.+)"}"""
 
     val title: String = s"${shopRequest.method} on $path"
@@ -77,9 +79,9 @@ class CheckoutSimulation extends Simulation
           .header("Authorization", "Bearer ${authToken}")
           .check(regex(_ => orderIdPattern).optional.saveAs("orderId"))
           .body(StringBody(body.get.value match {
-            case UserIdPattern() => body.get.value.replace("0000000000", "${userId}")
-            case BasketIdPattern() => body.get.value.replace("0000000000", "${basketId}")
-            case _ => body.get.value.replace("0000000000", "${randomCounter}")
+            case UserIdPattern(userId) => body.get.value.replace(userId, "${userId}")
+            case BasketIdPattern(basketId) => body.get.value.replace(basketId, "${basketId}")
+            case _ => body.get.value
           })).asJson
     }).check(status lt 400)
   }
