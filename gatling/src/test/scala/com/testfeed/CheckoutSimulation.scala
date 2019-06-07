@@ -2,9 +2,9 @@ package com.testfeed
 
 import com.testfeed.ScenarioBuilder._
 import com.testfeed.ScenarioJsonParser.loadDataFromFile
+import com.testfeed.Utils.{makePathsDynamic, makePostPayloadsDynamic}
 import com.testfeed.config.SimulationConfig
 import io.gatling.core.Predef._
-import io.gatling.core.session.Expression
 import io.gatling.core.structure.{PopulationBuilder, ScenarioBuilder}
 import io.gatling.http.Predef.{http, status, _}
 import io.gatling.http.request.builder.HttpRequestBuilder
@@ -49,26 +49,16 @@ class CheckoutSimulation extends Simulation
   private def createRequestBuilder(shopRequest: JuiceShopRequest): HttpRequestBuilder = {
     import shopRequest._
 
-    val BasketPathPattern = """.+/basket/(\d+)[/checkout"]?""".r
-    val OrderIdPattern = ".*ftp/(.+)".r
+    val dynamicPath = makePathsDynamic(path)
+    val pageUrl: String = s"$baseUrl$dynamicPath"
 
-    val pageUrl: Expression[String] = {
-      path match {
-        case BasketPathPattern(basketId) =>
-          s"$baseUrl${path.replace(basketId, "${basketId}")}"
-        case OrderIdPattern(orderId) =>
-          s"$baseUrl${path.replace(orderId, "${orderId}")}"
-        case _ => s"$baseUrl$path"
-      }
-    }
-
-    val UserIdPattern = """.+UserId.+(\d+)""".r
-    val BasketIdPattern = """.+BasketId\":\"(\d+).+""".r
+    val authTokenPattern = """"token":"(.+)","""
+    val basketIdPattern = """bid":(\d+),"""
+    val userIdPattern = """"isActive":true,"id":(\d+),"""
     val orderIdPattern = """orderConfirmation":"/ftp/(.+)"}"""
 
-    val title: String = s"${shopRequest.method} on $path"
-    val httpMethods = http(title)
-    (shopRequest.method match {
+    val httpMethods = http(s"$method on $dynamicPath")
+    (method match {
       case "GET" => httpMethods.get(pageUrl)
         .header("Authorization", "Bearer ${authToken}")
         .disableFollowRedirect
@@ -77,12 +67,11 @@ class CheckoutSimulation extends Simulation
           .post(pageUrl)
           .header("Content-Type", "application/json")
           .header("Authorization", "Bearer ${authToken}")
+          .check(regex(_ => userIdPattern).optional.saveAs("userId"))
           .check(regex(_ => orderIdPattern).optional.saveAs("orderId"))
-          .body(StringBody(body.get.value match {
-            case UserIdPattern(userId) => body.get.value.replace(userId, "${userId}")
-            case BasketIdPattern(basketId) => body.get.value.replace(basketId, "${basketId}")
-            case _ => body.get.value
-          })).asJson
+          .check(regex(_ => authTokenPattern).optional.saveAs("authToken"))
+          .check(regex(_ => basketIdPattern).optional.saveAs("basketId"))
+          .body(StringBody(makePostPayloadsDynamic(body))).asJson
     }).check(status lt 400)
   }
 }

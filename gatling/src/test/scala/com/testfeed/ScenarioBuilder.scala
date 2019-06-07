@@ -24,8 +24,7 @@ object ScenarioBuilder extends SimulationConfig
       .exec(login).exitHereIfFailed
 
     journeySteps.foldLeft(
-      scenario(name).feed(emailFeeder)
-      .exec(registrationSteps).exec(loginSteps)) { (steps, requestBuilder) =>
+      scenario(name).feed(emailFeeder).feed(passwordFeeder).feed(dummyAuthFeeder)) { (steps, requestBuilder) =>
       steps.exec(requestBuilder).exitHereIfFailed
     }
   }

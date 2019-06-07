@@ -14,6 +14,8 @@ trait RegistrationSteps {
   val userIdPattern = """"id":([\d]+),"""
 
   val emailFeeder = Iterator.continually(Map("email" -> s"${Random.alphanumeric.take(10).mkString}@testing.com"))
+  val passwordFeeder = Iterator.continually(Map("password" -> s"${Random.alphanumeric.take(15).mkString}"))
+  val dummyAuthFeeder = Iterator.fill(1)(Map("authToken" -> ""))
 
   val getSecurityQuestions = http("Get security questions")
     .get(securityQuestionsUrl)
