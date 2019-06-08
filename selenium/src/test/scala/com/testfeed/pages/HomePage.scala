@@ -1,9 +1,6 @@
 package com.testfeed.pages
 
-import org.openqa.selenium.support.ui.{ExpectedConditions, WebDriverWait}
 import org.openqa.selenium.{By, WebDriver}
-
-import scala.collection.JavaConversions._
 
 case class HomePage(implicit driver: WebDriver) extends BasePage {
 
@@ -18,10 +15,6 @@ case class HomePage(implicit driver: WebDriver) extends BasePage {
   val confirmationMessageLocator: By = By.className("confirmation")
 
   def addToBasket(product: String): Unit = {
-    val rowContainingProduct = driver.findElement(productTableLocator).findElements(productRowsLocator)
-      .filter(_.findElements(columnCellLocator).map(_.getText).contains(product)).head
 
-    rowContainingProduct.findElement(basketLocator).click()
-    assert(new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(confirmationMessageLocator)).getText.contains(product))
   }
 }

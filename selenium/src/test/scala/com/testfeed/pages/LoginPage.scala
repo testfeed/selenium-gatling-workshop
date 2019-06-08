@@ -1,7 +1,6 @@
 package com.testfeed.pages
 
 import org.openqa.selenium.{By, WebDriver}
-import org.openqa.selenium.support.ui.{ExpectedConditions, WebDriverWait}
 
 case class LoginPage(implicit driver: WebDriver) extends BasePage {
 
@@ -13,8 +12,6 @@ case class LoginPage(implicit driver: WebDriver) extends BasePage {
   val logInButtonLocator: By = By.id("loginButton")
 
   def login(email: String, password: String): Unit = {
-    emailField(emailFieldId).value = email
-    pwdField(passwordFieldId).value = password
-    new WebDriverWait(driver, 5).until(ExpectedConditions.elementToBeClickable(logInButtonLocator)).click()
+
   }
 }
