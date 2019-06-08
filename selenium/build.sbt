@@ -5,7 +5,7 @@ scalaVersion := "2.11.11"
 
 version := "0.1.0"
 
-resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies += "org.scalatest"           %% "scalatest"                       % "3.0.3"  % "test"
 libraryDependencies += "org.seleniumhq.selenium" % "selenium-java"                    % "3.14.0" % "test"
