@@ -22,12 +22,12 @@ class CheckoutSimulation extends Simulation
   if (runSingleUserJourney) {
     val injectedBuilders = Seq(checkoutScenario("checkout juice").inject(atOnceUsers(1)))
 
-    setUp(injectedBuilders: _*).protocols(http.connectionHeader("close"))
+    setUp(injectedBuilders: _*).protocols(http)
       .assertions(global.failedRequests.count.is(0))
 
   } else {
 
-    setUp(withInjectedLoad(): _*).protocols(http.connectionHeader("close"))
+    setUp(withInjectedLoad(): _*).protocols(http)
       .assertions(global.failedRequests.percent.lt(1))
   }
 }

@@ -15,7 +15,6 @@ trait RegistrationSteps {
 
   val emailFeeder = Iterator.continually(Map("email" -> s"${Random.alphanumeric.take(10).mkString}@testing.com"))
   val passwordFeeder = Iterator.continually(Map("password" -> s"${Random.alphanumeric.take(15).mkString}"))
-  val dummyAuthFeeder = Iterator.fill(1)(Map("authToken" -> ""))
 
   val getSecurityQuestions = http("Get security questions")
     .get(securityQuestionsUrl)
@@ -24,7 +23,7 @@ trait RegistrationSteps {
   val register = http("Registration")
     .post(registrationUrl)
     .header("Content-Type", "application/json")
-    .body(StringBody("{\"email\":\"${email}\",\"password\":\"P4ssword.\",\"passwordRepeat\":\"P4ssword.\",\"securityQuestion\":{\"id\":2,\"question\":\"Mother's maiden name?\",\"createdAt\":\"2019-06-03T19:54:37.113Z\",\"updatedAt\":\"2019-06-03T19:54:37.113Z\"},\"securityAnswer\":\"oo4PGZpyzR\"}"))
+    .body(StringBody("{\"email\":\"${email}\",\"password\":\"${password}\",\"passwordRepeat\":\"${password}\",\"securityQuestion\":{\"id\":2,\"question\":\"Mother's maiden name?\",\"createdAt\":\"2019-06-03T19:54:37.113Z\",\"updatedAt\":\"2019-06-03T19:54:37.113Z\"},\"securityAnswer\":\"oo4PGZpyzR\"}"))
     .check(regex(_ => userIdPattern).saveAs("userId"))
     .check(status lt 400)
 

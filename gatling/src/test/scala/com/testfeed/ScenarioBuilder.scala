@@ -11,14 +11,10 @@ object ScenarioBuilder extends SimulationConfig
 
   def checkoutScenario(name: String): ScenarioBuilder = {
 
-    val registrationSteps = scenario(name)
+    scenario(name)
       .exec(getSecurityQuestions).exitHereIfFailed
-      .exec(register).exitHereIfFailed
+      .exec(register).feed(emailFeeder).feed(passwordFeeder).exitHereIfFailed
       .exec(storeSecurityAnswer).exitHereIfFailed
-
-    val loginSteps = scenario(name)
       .exec(login).exitHereIfFailed
-
-    scenario(name).exec(registrationSteps, loginSteps).exitHereIfFailed
   }
 }

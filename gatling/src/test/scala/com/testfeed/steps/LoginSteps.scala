@@ -13,7 +13,7 @@ trait LoginSteps {
   val login = http("Login")
     .post(loginUrl)
     .header("Content-Type", "application/json")
-    .body(StringBody("{\"email\":\"${email}\",\"password\":\"P4ssword.\"}"))
+    .body(StringBody("{\"email\":\"${email}\",\"password\":\"${password}\"}"))
     .check(regex(_ => dslAuthTokenPattern).saveAs("authToken"))
     .check(regex(_ => dslBasketIdPattern).saveAs("basketId"))
     .check(status lt 400)
