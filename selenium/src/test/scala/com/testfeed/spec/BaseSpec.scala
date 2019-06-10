@@ -29,12 +29,6 @@ trait BaseSpec extends FeatureSpec
     deleteAllCookies()
   }
 
-  val urlExclusions = Seq("admin", "whoami", "Challenges", "languages", "json", "socket")
-
-  override def afterEach(testData: TestData): Unit = {
-
-  }
-
   override def beforeAll() {
     super.beforeAll()
     sys.addShutdownHook {
