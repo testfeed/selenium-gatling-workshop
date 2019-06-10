@@ -9,16 +9,6 @@ import io.gatling.http.Predef.http
 class CheckoutSimulation extends Simulation
   with SimulationConfig {
 
-  private def withInjectedLoad(): Seq[PopulationBuilder] = {
-
-    val injectionSteps = List(
-      rampUsersPerSec(minUsers).to(maxUsers).during(rampUpTime),
-      constantUsersPerSec(maxUsers).during(constantRateTime),
-      rampUsersPerSec(maxUsers).to(minUsers).during(rampDownTime)
-    )
-    Seq(checkoutScenario("checkout juice").inject(injectionSteps))
-  }
-
   if (runSingleUserJourney) {
     val injectedBuilders = Seq(checkoutScenario("checkout juice").inject(atOnceUsers(1)))
 
@@ -29,5 +19,15 @@ class CheckoutSimulation extends Simulation
 
     setUp(withInjectedLoad(): _*).protocols(http)
       .assertions(global.failedRequests.percent.lt(1))
+  }
+
+  private def withInjectedLoad(): Seq[PopulationBuilder] = {
+
+    val injectionSteps = List(
+      rampUsersPerSec(minUsers).to(maxUsers).during(rampUpTime),
+      constantUsersPerSec(maxUsers).during(constantRateTime),
+      rampUsersPerSec(maxUsers).to(minUsers).during(rampDownTime)
+    )
+    Seq(checkoutScenario("checkout juice").inject(injectionSteps))
   }
 }
