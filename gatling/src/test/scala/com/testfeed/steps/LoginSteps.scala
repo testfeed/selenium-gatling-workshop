@@ -10,12 +10,4 @@ trait LoginSteps {
   val dslAuthTokenPattern = """"token":"(.+)","""
   val dslBasketIdPattern = """"bid":([\d]+),"""
 
-  val login = http("Login")
-    .post(loginUrl)
-    .header("Content-Type", "application/json")
-    .body(StringBody("{\"email\":\"${email}\",\"password\":\"P4ssword.\"}"))
-    .check(regex(_ => dslAuthTokenPattern).saveAs("authToken"))
-    .check(regex(_ => dslBasketIdPattern).saveAs("basketId"))
-    .check(status lt 400)
-
 }
