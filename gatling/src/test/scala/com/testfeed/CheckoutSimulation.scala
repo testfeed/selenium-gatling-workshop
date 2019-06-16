@@ -1,52 +1,33 @@
 package com.testfeed
 
-import com.testfeed.ScenarioBuilder._
 import com.testfeed.ScenarioJsonParser.loadDataFromFile
 import com.testfeed.Utils.{makePathsDynamic, makePostPayloadsDynamic}
 import com.testfeed.config.SimulationConfig
 import io.gatling.core.Predef._
-import io.gatling.core.structure.{PopulationBuilder, ScenarioBuilder}
+import io.gatling.core.structure.ChainBuilder
 import io.gatling.http.Predef.{http, status, _}
-import io.gatling.http.request.builder.HttpRequestBuilder
 
 class CheckoutSimulation extends Simulation
   with SimulationConfig {
 
-  private def withInjectedLoad(scenarioDefinitions: Seq[ScenarioDefinition]): Seq[PopulationBuilder] = scenarioDefinitions.map(scenarioDefinition => {
+  val httpProtocol = http.baseUrl("http://localhost:3000")
 
-    val injectionSteps = List(
-      rampUsersPerSec(minUsers).to(maxUsers).during(rampUpTime),
-      constantUsersPerSec(maxUsers).during(constantRateTime),
-      rampUsersPerSec(maxUsers).to(minUsers).during(rampDownTime)
-    )
-    scenarioDefinition.builder.inject(injectionSteps)
-  })
+  val mainScn = scenario("Checkout")
+    .exec(buildJourneyRequests(loadDataFromFile("src/test/resources/data/checkoutJourney.json")))
 
-  //for multiple journeys, the load acts as a distribution i.e. 25% or 0.25 of the times use journey A
-  lazy val checkoutScenarioDefinitions = Seq(
-    ScenarioConfig(s"src/test/resources/data/checkoutJourney.json", 1)
-  ).map(config => ScenarioDefinition(checkoutScenario(config.fileName, buildJourneyRequests(loadDataFromFile(config.fileName))), config.load))
-
-  if (runSingleUserJourney) {
-    val injectedBuilders = checkoutScenarioDefinitions.map(scenarioDefinition => {
-      scenarioDefinition.builder.inject(atOnceUsers(1))
-    })
-    setUp(injectedBuilders: _*).protocols(http.connectionHeader("close"))
+    setUp(
+      mainScn.inject(atOnceUsers(1))
+    ).protocols(httpProtocol)
       .assertions(global.failedRequests.count.is(0))
-  } else {
-    setUp(withInjectedLoad(checkoutScenarioDefinitions): _*).protocols(http.connectionHeader("close"))
-      .assertions(global.failedRequests.percent.lt(1))
-  }
 
-
-  private def buildJourneyRequests(fragment: ScenarioFragment): Seq[HttpRequestBuilder] = {
+  private def buildJourneyRequests(fragment: ScenarioFragment): Seq[ChainBuilder] = {
     fragment.scenarioRequests
       .map {
         createRequestBuilder(_)
       }
   }
 
-  private def createRequestBuilder(shopRequest: JuiceShopRequest): HttpRequestBuilder = {
+  private def createRequestBuilder(shopRequest: JuiceShopRequest): ChainBuilder = {
     import shopRequest._
 
     val dynamicPath = makePathsDynamic(path)
@@ -58,7 +39,8 @@ class CheckoutSimulation extends Simulation
     val orderIdPattern = """orderConfirmation":"/ftp/(.+)"}"""
 
     val httpMethods = http(s"$method on $dynamicPath")
-    (method match {
+
+    exec((method match {
       case "GET" => httpMethods.get(pageUrl)
         .header("Authorization", "Bearer ${authToken}")
         .disableFollowRedirect
@@ -72,14 +54,6 @@ class CheckoutSimulation extends Simulation
           .check(regex(_ => authTokenPattern).optional.saveAs("authToken"))
           .check(regex(_ => basketIdPattern).optional.saveAs("basketId"))
           .body(StringBody(makePostPayloadsDynamic(body))).asJson
-    }).check(status lt 400)
-  }
-}
-
-case class ScenarioConfig(fileName: String, load: Double)
-
-case class ScenarioDefinition(builder: ScenarioBuilder, load: Double) {
-  def this(scenarioBuilder: ScenarioBuilder) {
-    this(scenarioBuilder, 1.0)
+    }).check(status lt 400))
   }
 }
