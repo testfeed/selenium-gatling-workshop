@@ -16,6 +16,12 @@ case class RegistrationPage()(implicit driver: WebDriver) extends BasePage {
   val registerButtonLocator: By = By.id("registerButton")
 
   def register(email: String, password: String, securityQuestion: String, securityAnswer: String): Unit = {
-
+    driver.navigate().to(url)
+    driver.findElement(By.id(emailFieldId)).sendKeys(email)
+    driver.findElement(By.id(passwordFieldId)).sendKeys(password)
+    driver.findElement(By.id(repeatPasswordFieldId)).sendKeys(password)
+    driver.findElement(By.id(securityQuestionFieldId))sendKeys(securityQuestion)
+    driver.findElement(By.id(securityAnswerFieldId)).sendKeys(securityAnswer)
+    driver.findElement(registerButtonLocator).click()
   }
 }
