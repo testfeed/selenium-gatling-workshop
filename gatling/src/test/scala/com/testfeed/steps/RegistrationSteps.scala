@@ -23,13 +23,34 @@ trait RegistrationSteps {
   val register = http("Registration")
     .post(registrationUrl)
     .header("Content-Type", "application/json")
-    .body(StringBody("{\"email\":\"${email}\",\"password\":\"${password}\",\"passwordRepeat\":\"${password}\",\"securityQuestion\":{\"id\":2,\"question\":\"Mother's maiden name?\",\"createdAt\":\"2019-06-03T19:54:37.113Z\",\"updatedAt\":\"2019-06-03T19:54:37.113Z\"},\"securityAnswer\":\"oo4PGZpyzR\"}"))
-    .check(regex(_ => userIdPattern).saveAs("userId"))
+    .body(StringBody(
+      """
+        |{
+        |  "email": "${email}",
+        |  "password": "${password}",
+        |  "passwordRepeat": "${password}",
+        |  "securityQuestion": {
+        |    "id": 2,
+        |    "question": "Mother's maiden name?",
+        |    "createdAt": "2019-06-03T19:54:37.113Z",
+        |    "updatedAt": "2019-06-03T19:54:37.113Z"
+        |  },
+        |  "securityAnswer": "oo4PGZpyzR"
+        |}
+      """.stripMargin))
+    .check(regex(userIdPattern).saveAs("userId"))
     .check(status lt 400)
 
   val storeSecurityAnswer = http("Send security answer")
     .post(securityAnswersUrl)
     .header("Content-Type", "application/json")
-    .body(StringBody("{\"UserId\":${userId},\"answer\":\"mmn\",\"SecurityQuestionId\":2}"))
+    .body(StringBody(
+      """
+        |{
+        |  "UserId": ${userId},
+        |  "answer": "mmn",
+        |  "SecurityQuestionId": 2
+        |}
+      """.stripMargin))
     .check(status lt 400)
 }
