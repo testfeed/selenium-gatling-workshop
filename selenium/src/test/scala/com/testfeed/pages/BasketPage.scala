@@ -4,17 +4,14 @@ import org.openqa.selenium.{By, WebDriver}
 
 case class BasketPage(implicit driver: WebDriver) extends BasePage {
 
-  override lazy val isDisplayed: Boolean = driver.findElement(pageHeadingLocator).getText.contains("Your Basket")
+  override lazy val isDisplayed: Boolean = WaitUtils.waitForElementToContainText(pageHeadingLocator, "Your Basket")
   override val url: String = s"${baseUrl("juice-shop")}/#/basket"
 
   val pageHeadingLocator: By = By.className("heading")
   val checkoutButtonLocator: By = By.id("checkoutButton")
 
   def checkout(): Unit = {
-
-  }
-
-  def basketIsEmpty(): Boolean = {
-    true
+    driver.navigate().to(url)
+    WaitUtils.waitForElementToBeClickable(checkoutButtonLocator).click()
   }
 }

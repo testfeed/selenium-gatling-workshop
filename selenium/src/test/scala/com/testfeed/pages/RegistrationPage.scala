@@ -1,11 +1,10 @@
 package com.testfeed.pages
 
-import org.openqa.selenium.support.ui.{ExpectedConditions, WebDriverWait}
 import org.openqa.selenium.{By, WebDriver}
 
 case class RegistrationPage()(implicit driver: WebDriver) extends BasePage {
 
-  override lazy val isDisplayed: Boolean = new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.id(emailFieldId))).isDisplayed
+  override lazy val isDisplayed: Boolean = WaitUtils.waitForElementToContainText(registerButtonLocator, "Register")
   override val url: String = s"${baseUrl("juice-shop")}/#/register"
 
   val emailFieldId: String = "emailControl"
@@ -23,5 +22,7 @@ case class RegistrationPage()(implicit driver: WebDriver) extends BasePage {
     driver.findElement(By.id(securityQuestionFieldId))sendKeys(securityQuestion)
     driver.findElement(By.id(securityAnswerFieldId)).sendKeys(securityAnswer)
     driver.findElement(registerButtonLocator).click()
+    WaitUtils.waitForElementToBeClickable(registerButtonLocator).click()
+    LoginPage().isDisplayed
   }
 }

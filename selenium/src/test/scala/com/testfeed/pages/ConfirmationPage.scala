@@ -10,6 +10,7 @@ case class ConfirmationPage(implicit driver: WebDriver) extends BasePage {
   val bodyLocator: By = By.tagName("body")
 
   def getOrderConfirmation(): String = {
-    "to implement"
+    WaitUtils.waitForElementToContainText(bodyLocator, "Order Confirmation")
+    driver.getPageSource
   }
 }
