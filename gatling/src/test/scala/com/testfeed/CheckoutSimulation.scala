@@ -11,8 +11,10 @@ class CheckoutSimulation extends Simulation
   with RegistrationSteps {
 
   val mainScn = scenario("Register and login")
+      .exec(registrationRequest)
+      .exec(loginRequest)
 
   setUp(
     mainScn.inject(atOnceUsers(1))
-  ).protocols(http.baseUrl(baseUrl))
+  ).protocols(http.baseUrl(baseUrl).contentTypeHeader("application/json"))
 }
