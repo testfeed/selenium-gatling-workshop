@@ -9,5 +9,4 @@ trait BasePage extends WebBrowser with Page
 
   lazy val config: Config = juiceShopConfig
   def isDisplayed: Boolean
-
 }

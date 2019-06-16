@@ -9,7 +9,5 @@ case class ConfirmationPage(implicit driver: WebDriver) extends BasePage {
 
   val bodyLocator: By = By.tagName("body")
 
-  def getOrderConfirmation(): String = {
-    "to implement"
-  }
+  def getOrderConfirmation(): String = ???
 }

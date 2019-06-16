@@ -2,9 +2,11 @@ package com.testfeed.pages
 
 import org.openqa.selenium.{By, WebDriver}
 
+import scala.collection.JavaConversions._
+
 case class HomePage(implicit driver: WebDriver) extends BasePage {
 
-  override lazy val isDisplayed: Boolean = driver.findElement(headerCellLocator).isDisplayed
+  override lazy val isDisplayed: Boolean = WaitUtils.waitForElementToContainText(headerCellLocator, "Image")
   override val url: String = s"${baseUrl("juice-shop")}/#/"
 
   val headerCellLocator: By = By.cssSelector("mat-header-row > mat-header-cell")
@@ -14,7 +16,5 @@ case class HomePage(implicit driver: WebDriver) extends BasePage {
   val basketLocator: By = By.cssSelector("[data-icon='cart-plus']")
   val confirmationMessageLocator: By = By.className("confirmation")
 
-  def addToBasket(product: String): Unit = {
-
-  }
+  def addToBasket(product: String) = ???
 }

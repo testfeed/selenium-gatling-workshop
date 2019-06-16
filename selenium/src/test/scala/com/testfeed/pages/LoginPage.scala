@@ -4,14 +4,12 @@ import org.openqa.selenium.{By, WebDriver}
 
 case class LoginPage(implicit driver: WebDriver) extends BasePage {
 
-  override lazy val isDisplayed: Boolean = emailField(emailFieldId).isDisplayed
+  override lazy val isDisplayed: Boolean = WaitUtils.waitForElementToContainText(logInButtonLocator, "Log in")
   override val url: String = s"${baseUrl("juice-shop")}/#/login"
 
   val emailFieldId: String = "email"
   val passwordFieldId: String = "password"
   val logInButtonLocator: By = By.id("loginButton")
 
-  def login(email: String, password: String): Unit = {
-
-  }
+  def login(email: String, password: String) = ???
 }
