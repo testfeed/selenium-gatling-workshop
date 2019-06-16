@@ -1,7 +1,6 @@
 package com.testfeed.pages
 
 import org.openqa.selenium.{By, WebDriver}
-import org.openqa.selenium.support.ui.{ExpectedConditions, WebDriverWait}
 
 case class ConfirmationPage(implicit driver: WebDriver) extends BasePage {
 
@@ -11,7 +10,7 @@ case class ConfirmationPage(implicit driver: WebDriver) extends BasePage {
   val bodyLocator: By = By.tagName("body")
 
   def getOrderConfirmation(): String = {
-    new WebDriverWait(driver, 5).until(ExpectedConditions.textToBePresentInElementLocated(bodyLocator, "Order Confirmation"))
+    WaitUtils.waitForElementToContainText(bodyLocator, "Order Confirmation")
     driver.getPageSource
   }
 }
