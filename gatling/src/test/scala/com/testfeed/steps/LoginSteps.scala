@@ -20,8 +20,8 @@ trait LoginSteps {
         |  "password": "${password}"
         |}
       """.stripMargin))
-    .check(regex(_ => dslAuthTokenPattern).saveAs("authToken"))
-    .check(regex(_ => dslBasketIdPattern).saveAs("basketId"))
+    .check(regex(dslAuthTokenPattern).saveAs("authToken"))
+    .check(regex(dslBasketIdPattern).saveAs("basketId"))
     .check(status lt 400)
 
 }
