@@ -16,5 +16,8 @@ case class HomePage(implicit driver: WebDriver) extends BasePage {
   val basketLocator: By = By.cssSelector("[data-icon='cart-plus']")
   val confirmationMessageLocator: By = By.className("confirmation")
 
-  def addToBasket(product: String) = ???
+  def addToBasket(product: String) = {
+    driver.findElements(productRowsLocator).filter(_.getText.contains(product)).head.findElement(basketLocator).click()
+    WaitUtils.waitForElementToContainText(confirmationMessageLocator, product)
+  }
 }
