@@ -2,7 +2,13 @@ package com.testfeed
 
 import play.api.libs.json.JsString
 
+import scala.util.Random
+
 object Utils {
+
+  val emailFeeder = Iterator.continually(Map("email" -> s"${Random.alphanumeric.take(10).mkString}@testing.com"))
+  val passwordFeeder = Iterator.continually(Map("password" -> s"${Random.alphanumeric.take(15).mkString}"))
+  val dummyAuthFeeder = Iterator.fill(1)(Map("authToken" -> ""))
 
   def makePathsDynamic(path: String): String = {
     val BasketPathPattern = """.+/basket/(\d+)[/checkout"]?.*""".r

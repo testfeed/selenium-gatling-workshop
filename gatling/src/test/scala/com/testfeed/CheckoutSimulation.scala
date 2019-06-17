@@ -1,30 +1,38 @@
 package com.testfeed
 
 import com.testfeed.ScenarioJsonParser.loadDataFromFile
-import com.testfeed.Utils.{makePathsDynamic, makePostPayloadsDynamic}
+import com.testfeed.Utils._
 import com.testfeed.config.SimulationConfig
 import io.gatling.core.Predef._
 import io.gatling.core.structure.ChainBuilder
-import io.gatling.http.Predef.{http, status, _}
+import io.gatling.http.Predef.{http, _}
 
 class CheckoutSimulation extends Simulation
   with SimulationConfig {
 
-  val httpProtocol = http.baseUrl("http://localhost:3000")
+  val httpProtocol = http.baseUrl(baseUrl)
+    .header("Content-Type", "application/json")
+    .header("Authorization", "Bearer ${authToken}")
+
 
   val mainScn = scenario("Checkout")
+    .feed(emailFeeder)
+    .feed(passwordFeeder)
+    .feed(dummyAuthFeeder)
     .exec(buildJourneyRequests(loadDataFromFile("src/test/resources/data/checkoutJourney.json")))
 
-    setUp(
-      mainScn.inject(atOnceUsers(1))
-    ).protocols(httpProtocol)
-      .assertions(global.failedRequests.count.is(0))
+  val injectionSteps = List(
+    rampUsersPerSec(minUsers).to(maxUsers).during(rampUpTime),
+    constantUsersPerSec(maxUsers).during(constantRateTime),
+    rampUsersPerSec(maxUsers).to(minUsers).during(rampDownTime)
+  )
+
+  setUp(
+    mainScn.inject(atOnceUsers(1))
+  ).protocols(httpProtocol)
 
   private def buildJourneyRequests(fragment: ScenarioFragment): Seq[ChainBuilder] = {
-    fragment.scenarioRequests
-      .map {
-        createRequestBuilder(_)
-      }
+    fragment.scenarioRequests.map(createRequestBuilder)
   }
 
   private def createRequestBuilder(shopRequest: JuiceShopRequest): ChainBuilder = {
@@ -40,20 +48,16 @@ class CheckoutSimulation extends Simulation
 
     val httpMethods = http(s"$method on $dynamicPath")
 
-    exec((method match {
+    exec(method match {
       case "GET" => httpMethods.get(pageUrl)
-        .header("Authorization", "Bearer ${authToken}")
-        .disableFollowRedirect
       case "POST" =>
         httpMethods
           .post(pageUrl)
-          .header("Content-Type", "application/json")
-          .header("Authorization", "Bearer ${authToken}")
-          .check(regex(_ => userIdPattern).optional.saveAs("userId"))
-          .check(regex(_ => orderIdPattern).optional.saveAs("orderId"))
-          .check(regex(_ => authTokenPattern).optional.saveAs("authToken"))
-          .check(regex(_ => basketIdPattern).optional.saveAs("basketId"))
+          .check(regex(userIdPattern).optional.saveAs("userId"))
+          .check(regex(orderIdPattern).optional.saveAs("orderId"))
+          .check(regex(authTokenPattern).optional.saveAs("authToken"))
+          .check(regex(basketIdPattern).optional.saveAs("basketId"))
           .body(StringBody(makePostPayloadsDynamic(body))).asJson
-    }).check(status lt 400))
+    })
   }
 }
