@@ -69,7 +69,7 @@
 
 #### Clone the workshop git repo
 ```
-    git clone git@github.com:testfeed/selenium-gatling-workshop.git
+    git clone https://github.com/testfeed/selenium-gatling-workshop.git
 ```
 
 #### Resolve the selenium project dependencies and run the sample test
